@@ -34,6 +34,17 @@ def get_diff_list(pre_tag_name, after_tag_name):
     for diff in tag_diffs:
         print(diff.change_type, ": ", diff.a_path)
 
+def get_tree(commit):
+    tree = repo.tree(repo.commit(commit))
+
+    for entry in tree:
+        print(entry)
+
+def ptree(args):
+    get_tree(args.ref_commit)
+
+def dl(args):
+    get_diff_list(args.pre_tag, args.after_tag)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='My Git Patch Tool')
@@ -47,8 +58,12 @@ if __name__ == '__main__':
 
     parser_diff_list.add_argument('--pre_tag', dest='pre_tag', required=True)
     parser_diff_list.add_argument('--after_tag', dest='after_tag', required=True)
-    parser_diff_list.set_defaults(func=get_diff_list)
+    parser_diff_list.set_defaults(func=dl)
 
+    parser_print_tree = subparsers.add_parser('print_tree', aliases=['ptree'],
+            help='print commit file tree')
+    parser_print_tree.add_argument('--ref', dest='ref_commit')
+    parser_print_tree.set_defaults(func=ptree)
     
     args = parser.parse_args()
-    args.func(args.pre_tag, args.after_tag)
+    args.func(args)
