@@ -34,15 +34,13 @@ def get_diff_list(pre_tag_name, after_tag_name):
     for diff in tag_diffs:
         print(diff.change_type, ": ", diff.a_path)
 
-def get_tree(commit):
-    tree = repo.tree(repo.commit(commit))
-
-    for entry in tree:
-        print(entry)
+def get_traversed_tree(commit):
+    return repo.tree(repo.commit(commit)).traverse()
 
 def ptree(args):
-    get_tree(args.ref_commit)
-
+    for entry in get_traversed_tree(args.ref_commit):
+        print(entry.abspath)
+    
 def dl(args):
     get_diff_list(args.pre_tag, args.after_tag)
 
